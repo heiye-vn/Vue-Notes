@@ -962,8 +962,10 @@ export default new Vue()
 
   
   
-- `路由重定向`
+- `路由重定向和别名`
 
+  ​	**重定向 **指用户访问一个 url 时会被替换到另一个 url
+  
   ```JavaScript
   // 方法一
   {path:'/home',redirect:'/home/news'}    // 重定向到 /home/news 路由
@@ -979,14 +981,142 @@ export default new Vue()
   // 方法四
   created(){
       this.$router.replace('/music')		// 使用编程导航的方法重定向路由
-  }
+}
+  ```
+  
+  ​		**别名** 指用户访问一个 url 时会被该 url 的另一个名字代替，但还是匹配到原来的 url 上
+  
+  ```JavaScript
+  {path:'/home/music' component:Music alias:'/xxx' }  // 即'/xxx' 代替了 '/home/music'
+  ```
+  
+  
+
+## 11.路由管理
+
+- `文件引入方式`
+
+  ```javascript
+  //绝对路径
+  // 1.在项目运行目录 public（/）下引入
+  <img src="/xxx.png" alt="">
+  
+  //相对路径
+  // 2.直接引入
+  <img src="../xx/xxx.png" alt="">
+      
+  // 3.作为模块引入（import）
+  <img :src="img" alt="">
+  <script>
+  	import pic from '../xx/xxx.png'
+  	export default {
+          data(){
+              return {
+                  img:pic
+              }
+          }
+      }
+  </script>
+  
+  // 4.require方式引入
+  <img :src="img1" alt="">
+  <script>
+  	export default {
+          data(){
+              return {
+                  img1:require('../xx/xxx.png')
+              }
+          }
+      }
+  </script>
   ```
 
   
 
+- `路由（导航）守卫`
+
+  ​	正如其名，`vue-router` 提供的导航守卫主要用来通过跳转或取消的方式守卫导航。有多种机会植入路由导航过程中：全局的, 单个路由独享的, 或者组件级的
+
+  - <font color="lime">**全局守卫（会对所有路由组件生效）**</font>
+
+    ​	使用`router.beforeEach` 注册一个全局前置守卫，
+
+    ```JavaScript
+    router.beforeEach((to,from,next)=>{
+    	/*
+    		to:表示即将要去的路由
+    		from:表示当前导航正要离开的路由
+    		next:接收一个函数表示来执行上面的操作（结合判断使用）
+    		注：其中to和from都为一个路由对象
+    	*/   
+    })
+    
+    ```
+
+    ​	使用`router.afterEach` 注册一个全局后置钩子
+
+    ```JavaScript
+    router.afterEach((to,from)=>{
+        // 和前置守卫不同的是不会接收next函数，也不会改变导航本身
+    })
+    ```
+
+  - <font color="lime">**路由独享守卫**</font>
+
+    ​	使用`beforeEnter` 定义一个路由独享守卫，顾名思义，是对设置的某个路由组件生效
+
+    ```JavaScript
+    beforeEnter:(to,from next)=>{
+        ......
+    }
+    //es6语法
+    beforeEnter(to,from,next){
+        ......
+    }
+    ```
+
+  - <font color="lime">**组件内的守卫**</font>
+
+    ​	可以在路由组件中定义 `beforeRouteEnter`，`beforeRouteUpdate`，`beforeRouteLeave` 三种路由导航
+
+    ```javascript
+    beforeRouteEnter(to,from,next)=>{
+    	/*
+    		由于该守卫是在确认之前被调用，但是目标组件还未被创建，故不能使用 this 实例对象，可以给next传递一个回调函数来访问实例：next(vm=>{ ... })
+    		唯一支持给next传递回调函数的钩子，后面两种不支持，也没必要，因为已经能够使用 this 组件实例
+    	*/
+    },
+    beforeRouteUpdate(to,from,next)=>{
+    	/*
+    		在当前路由改变，但是组件被复用时调用，可以访问 this 组件实例
+    	*/
+    },
+    beforeRouteLeave(to,from,next)=>{
+    	/*
+    		导航离开对应组件时调用，可以访问 this 组件实例
+    		这个离开守卫通常用来禁止用户在还未保存修改前突然离开。该导航可以通过 next(false) 来取消
+    	*/
+    }
+    ```
+
+  - <font color="lime">**完整的路由导航解析流程**</font>
+
+    1. 导航被触发
+    2. 在失活的组件里调用离开守卫
+    3. 调用全局的 `beforeEach` 守卫
+    4. 在重用的组件里调用 `beforeRouteUpdate` 守卫
+    5. 在路由配置里调用 `beforeEnter` 
+    6. 解析异步路由组件
+    7. 在被激活的组件里调用 `beforeRouteEnter` 
+    8. 调用全局的 `beforeResolve` 守卫
+    9. 导航被确认
+    10. 调用全局的 `afterEach` 钩子
+    11. 触发DOM更新
+    12. 用创建好的实例调用 `beforeRouteEnter` 守卫中传给 `next` 的回调函数 
+
+    
 
 
-## 11.路由管理
 
 
 
