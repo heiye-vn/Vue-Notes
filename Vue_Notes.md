@@ -1120,5 +1120,137 @@ export default new Vue()
 
 ​		`Vuex` 是一个专为 Vue.js 应用程序开发的**状态管理模式**。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。
 
+​		`Vuex` 包含三大部分：**state**：驱动应用的数据源；**view**：以声明方式将数据映射到视图；**actions**：响应在view上的用户输入导致状态变化
+
+​		<font color="red">*单向数据流*</font> 工作原理图：
+
+![](https://vuex.vuejs.org/flow.png)
+
+​		问题：当实际项目中遇到多个组件共享状态时，就会破坏 `单向数据流` : 1.多个视图依赖于同一个状态；2.来自不同视图的行为需要变更同一状态
 
 
+
+​		解决：把组件的共享状态提取出来，以一个全局单例模式管理，在该模式下，组件树就构成了一个巨大的 “视图”，不管在树的哪个位置，任何组件都能够获取状态或者触发行为！
+
+
+
+​		通过定义和 <font color="red">*隔离状态管理*</font> 中的各种概念并通过强制规则维持视图和状态间的独立性 ——**Vuex基本思想**
+
+
+
+​		使用 `Vuex` 的场景：Vuex 可以实现管理状态共享，并附带了其他的概念和框架知识。在实际开发中如果不是开发大型单页面应用，建议不要使用 Vuex，小型应用可以使用 [store]([https://cn.vuejs.org/v2/guide/state-management.html#%E7%AE%80%E5%8D%95%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E8%B5%B7%E6%AD%A5%E4%BD%BF%E7%94%A8](https://cn.vuejs.org/v2/guide/state-management.html#简单状态管理起步使用)) 模式，构建中大型应用就需要考虑使用 Vuex 进行组件外部的状态管理了。
+
+
+
+​			<font size="5" color="red" >**状态调用**</font>
+
+```JavaScript
+// store.js文件
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+    state: {
+        name: 'hello vuex',
+        count:130,
+        list: [
+            {
+                id:1,
+                title:'框架玩会了么？',
+                completed:true
+            },
+            {
+                id:2,
+                title:'vuex状态管理学会了么？',
+                completed:true
+            },
+            {
+                id:3,
+                title:'明天准备实战了么？',
+                completed:false
+            }
+        ],
+    },
+    getters:{         // store自带的获取状态的api，可认为是store的computed属性
+        num1(state){
+            return ++state.count
+        },
+        num2(state){
+            return state.count
+        },
+        completed(state){
+            return state.list.filter(item=>item.id==3)
+        }
+    },
+    mutations: {},
+    actions: {}
+})
+```
+
+- 直接在Vue实例外部调用
+
+  ```html
+  <h1>{{$store.state.name}}</h1>
+  <h2>{{$store.state.count}}</h2>
+  ...
+  ```
+
+- 在Vue实例内部通过 **this** 调用
+
+  ```javascript
+  computed:{
+      name(){
+          return this.$store.state.name
+      },
+      list(){
+          return this.$store.state.list.filter(item=>item.completed)
+      }
+  }
+  ```
+
+  **注**：外部组件中使用的名字和 store.js中的名字最好要一样
+
+  <font color="red">**扩展：**</font>
+
+  可以使用 vuex 中的 `mapState` 方法对state进行简化
+
+  ```JavaScript
+  import {mapState} from 'vuex'
+  // 参数为数组
+  computed:mapState(['name','list'])
+  
+  // 参数为对象
+  computed:mapState({
+      name:state=> (return state.name),
+      list(state){
+          return state.list.filter(item=>item.completed)
+      }
+  })
+  ```
+
+- ### Getter
+
+  ​	通过 vuex 提供的 getter 方法获取 state 中的数据（可认为是 store 的 computed 属性）
+
+  ```javascript
+  computed:{		// Vue实例中的computed
+      num1(){
+  		return this.$store.getters.num1
+      },
+      completed(){
+          return this.$store.getter.completed
+      }
+  }
+  // 然后再在标签中进行渲染
+  
+  // 使用 mapGetters 简化 getters
+  computed: mapGetters(['num1','completed'])
+  ```
+
+  
+
+- ### Mutation
+
+- ### Action
