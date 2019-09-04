@@ -1184,8 +1184,27 @@ export default new Vuex.Store({
             return state.list.filter(item=>item.id==3)
         }
     },
-    mutations: {},
-    actions: {}
+    mutations: {
+        incrementC(state,n=1){
+            return state.count += n
+        },
+        decrementC(state,n=1){
+            return state.count -= n
+        }
+    },
+    actions: {
+        // 处理异步 提交 mutation
+        incrementCAsync(context){
+            setTimeout(()=>{
+                context.commit('incrementC')
+            },2000)
+        },
+        decrementCAsync({commit},payload){
+            setTimeout(()=>{
+               commit('decrementC',payload)
+            },2000)
+        },
+    }
 })
 ```
 
@@ -1228,6 +1247,12 @@ export default new Vuex.Store({
           return state.list.filter(item=>item.completed)
       }
   })
+  
+  // 使用es6扩展运算符来同时使用 state 和 getters
+  computed:{
+      ...mapState(['name','list']),
+      ...mapGetters(['num1','completed'])
+  }
   ```
 
 - ### Getter
@@ -1251,6 +1276,42 @@ export default new Vuex.Store({
 
   
 
-- ### Mutation
+- ### Mutation（同步操作）
 
-- ### Action
+  ​	 更改 Vuex 的 store 中的状态的唯一方法是提交 mutation。Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的 **事件类型 (type)** 和 一个 **回调函数 (handler)**。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数
+
+  ```JavaScript
+  menthod:{
+      incrementC(n){
+          return this.$store.commit('incrementC',n)
+      },
+      decrementC(n){
+          this.$store.commit('decrement',n)
+      }
+  }
+  // 通过按钮标签进行数字的增减
+  
+  // 使用 mapMutation 方法简化 mutations
+  methods: mapMutations(['incrementC','decrementC'])
+  ```
+
+
+
+​		**注：**在使用 Bootstrap框架时很多时候由于存在交互效果，需要依赖于 jQuery 库，故还需要引入 jQuery 插件库（js标签顺序是 jq 在 bs 前，不能反 ）
+
+- ### Action（异步操作）
+
+  ​		类似 mutation ，且 action 是直接提交的 mutation ，而不是直接变更状态
+
+  ```JavaScript
+  method:{
+      addUp() {
+                  this.$store.dispatch('incrementCAsync')
+              },
+      removeUp(n) {
+                  this.$store.dispatch('decrementCAsync', n)
+              }
+  }
+  ```
+
+  
