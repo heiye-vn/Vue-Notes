@@ -1,4 +1,4 @@
-# Vue Study Notes
+# Vue Study Notes（First version）
 
 
 ## 1.基本指令
