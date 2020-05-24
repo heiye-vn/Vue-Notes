@@ -2,7 +2,7 @@
 
 
 
-### Day01-初识vue&事件绑定
+## Day01-初识vue&事件绑定
 
 ​		**Vue** 是一套用户构建用户界面的<font color='red'>渐进式框架</font>，其核心库只关注视图层，易于上手，并且能和第三方库或者既有项目更好的整合。
 
@@ -106,7 +106,101 @@ this.$set(object,propertyName,value)
 
 
 
-### Day02
+## Day02-基本指令
+
+- **v-for**
+
+  ​	`v-for` 是基于一个数组来渲染一个列表，使用 `item in items`形式的语法
+
+  ```html
+  <ul>
+      <li v-for='(item,index) in arr' :key='item'>{{item}}</li>
+  </ul>
+  ```
+
+  1. 数据为数组时，有两个变量（item，index）
+  2.  数据为数字时，有两个变量（item，index）
+  3. 数据为数字符串时，有两个变量（item，index）
+  4. 数据为对象时，有三个参数（propertyValue，propertyName，index）
+  5. 可以使用 of 代替 in 作为分隔符
+
+  ​      <font color='blue'>注：使用 `v-for` 指令时最好为每一项提供一个 **key** 值，以便它能够跟踪每个节点的身份，从而重用和重新排序现有元素</font>
+
+  ​	  <font color="red">详解 key 值：`key` 的特殊 attribute 主要用在 Vue 的虚拟dom算法，在新旧 nodes对比时辨识 VNodes。如果不使用 key 值，Vue会使用一种最大限度减少动态元素并且尽可能的尝试就地修改/复用相同类型元素的算法。而使用 key 时，它会基于 key 的变化重新排列元素顺序，并且会移除 key 不存在的元素。有相同父元素的子元素必须有**独特的** key。重复的 key会造成渲染错误。</font>
+
+  
+
+- **v-model**
+
+  ​		`v-model` 在表单控件或者组件上创建双向数据绑定。它会根据控件类型自动选取正确的方法来更新元素。
+
+  ```html
+  <div id='app'>
+      <input type='text' v-model='msg' >
+  </div>
+  
+  <script>
+  	let vm = new Vue({
+          el:'#app',
+          data(){
+              return {
+                  msg:'Hello World'
+              }
+          }
+      })
+  </script>
+  ```
+
+  ​		<font color='blue'>在表单中，不同的表单控件收集到的数据也不同：</font>
+
+  - 普通文本框/文本域			收集的是文本框的输入数据
+
+  - 单选按钮                             收集的是单选按钮的 value 值
+
+  - 单个复选框                         收集的是一个布尔值，选中为true，反之为false
+
+  - 多个复选框                         收集的是一个数组，值为选中的复选框的 value 值
+
+  - 下拉框                                 收集的是 option 的 value 值，若加上 multiple，则收集的是一个数组
+
+    **修饰符**
+
+  - `.number`                             处理数字格式的字符串，将其变为 Number 类型的数据
+
+  - `.lazy`                                 数据变化后才响应，即不会执行 input 事件，而执行 change 事件
+
+  - `.trim`                                  自动过滤掉输入字符首尾的空白符
+
+    
+
+<font color='red'>**重：Vue双向数据绑定原理**</font>
+
+​	Vue.js 采用 **数据劫持** 结合 `发布者-订阅者` 模式的方式，通过 `Object.defineProperty()` 来劫持各个属性的 setter，gettter，在数据变动时发布消息给订阅者，触发相应的监听回调，从而进行数据响应。
+
+```JavaScript
+var obj  = {};
+Object.defineProperty(obj, 'name', {
+        get: function() {
+            console.log('我被获取了')
+            return val;
+        },
+        set: function (newVal) {
+            console.log('我被设置了')
+        }
+})
+obj.name = 'fei';//在给obj设置name属性的时候，触发了set这个方法
+var val = obj.name;//在得到obj的name属性，会触发get方法
+```
+
+​	原理图：
+
+![Two way data binding](https://images2017.cnblogs.com/blog/1162184/201709/1162184-20170918135341618-553576179.png)
+
+
+
+## Day03-基本指令&计算属性
+
+
 
 
 
