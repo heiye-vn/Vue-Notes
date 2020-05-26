@@ -43,7 +43,7 @@ this.$set(object,propertyName,value)
 
    <font color='blue'>**Vue中的事件修饰符：**</font>
 
-   ​		在原生js中，想要阻止事件传播或者阻止默认事件时很麻烦的，同样在react框架中也是如此，而为了解决这个问题，vue为 v-on 提供了专门的事件修饰符。
+   ​		在原生js中，想要阻止事件传播或者阻止默认事件时很麻烦的，同样在react框架中也是如此，而为了解决这个问题，vue为 `v-on` 提供了专门的事件修饰符。
 
    - `.stop`			阻止事件传播，相当于 `e.stopPropagation()`
 
@@ -200,17 +200,68 @@ var val = obj.name;//在得到obj的name属性，会触发get方法
 
 ## Day03-基本指令&计算属性
 
+- **v-bind** （语法糖：`:xxx='aaa'`）
+
+  ​	`v-bind`动态的绑定一个或者多个attribute，或一个组件prop到表达式。在绑定 `class` 或 `style` attribute 时，支持其它类型的值，如数组或对象。在绑定 prop 时，prop 必须在子组件中声明。
+
+```html
+    <div id="app">
+        <h3 data-age=22>我是h3标题</h3>
+        <h3 v-bind:zsp='a'>我是h3标题</h3>
+        <h3 :zsp='a'>我是h3标题</h3>
+
+        <!-- css行内样式 -->
+        <div style="color: blueviolet;">css行内样式绑定</div>
+
+        <!-- vue方式的样式绑定 -->
+        <p :style='{backgroundColor:"skyblue",color:"red"}'>vue方式的样式绑定</p>
+        <p :style='styleObj'>vue方式的样式绑定-将样式以对象形式分离出来</p>
+        <p :style='styleArr'>vue方式的样式绑定-将样式以数组形式分离出来</p>
+
+        <p :class='zsp'>单个类名绑定</p>
+        <p :class='classArr'>多个类名以数组方式绑定</p>
+        <p :class='classObj'>多个类名以对象方式绑定</p>
+        <h2 :class='{red,blue}'>对象语法绑定属性，属性的值为布尔值</h2>
+    </div>
+```
+
+<font color='blue'>注：没有参数时，可以绑定到一个包含键值对的对象。注意此时 `class` 和 `style` 绑定不支持数组和对象。</font>
 
 
 
+- **v-if**
 
+  ​	`v-if` 利用了原生 js 中对节点的 `create` 与  `remove` 方法来控制单个dom元素是否渲染在页面中，true表示渲染，false表示不渲染。如果要控制**多个dom元素**的显示，只需要在 `template` 标签中使用 **v-if** 指令。
 
+  用法：
 
+  ```html
+  <!-- v-if 的值为表达式 -->
+  <div v-if="Math.random() > 0.5">
+    Now you see me
+  </div>
+  
+  <!-- v-if 的值为变量 -->
+  <div v-if='isShow'>
+      xxxxx
+  </div>
+  ```
 
+  
 
+- **v-else**
 
+  `v-else` 为 `v-if` 的 "else" 块
 
+  <font color='blue'>注： v-else 必须紧跟在 v-if 或者 v-else-if 后面，否则不会被识别</font>
 
+  
+
+- **v-else-if**
+
+  `v-else-if` 为 `v-if` 的 "else-if" 块
+
+  注：v-else-if 
 
 
 
