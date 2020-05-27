@@ -548,7 +548,7 @@ var val = obj.name;//在得到obj的name属性，会触发get方法
 
 ## Day05-过滤器&生命周期
 
-
+233
 
 
 
