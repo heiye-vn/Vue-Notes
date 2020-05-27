@@ -342,7 +342,7 @@ var val = obj.name;//在得到obj的name属性，会触发get方法
 </script>
 ```
 
-![v-if和v-for](F:\Web前端\js第九期-系统班\框架班(react+node+vue)-海文\个人学习总结\vue\day03-基本指令&计算属性\v-if和v-for.png)
+![v-if和v-for](https://github.com/heiye-vn/Vue-Notes/blob/master/images/v-if%E5%92%8Cv-for.png?raw=true)
 
 ​	上面例子中 循环 todos 列表，并且带有 v-if 条件语句时，因为 v-for 的优先级会比 v-if 高，所有通过渲染的 index 索引值可知 循环了三次，只是后面的 v-if 语句让一种一个未渲染，而使用 conputed 计算属性将 v-if 条件为假的条件块过滤掉，这样就减少了不必要的循环。解决了 v-if 和 v-for 同时使用带来的问题。
 
