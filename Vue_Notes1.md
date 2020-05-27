@@ -386,6 +386,196 @@ var val = obj.name;//在得到obj的name属性，会触发get方法
 
 ## Day04-基本指令&监听器
 
+- **v-html**
+
+  ​	`v-html` 用于将 字符串 html 转化成 html 标签，类似于原生js中的 `innerHTML`
+
+  ```html
+  <div id='#app'>
+      <p v-html='msg'></p>
+  </div>
+  <script>
+  	let vm = new Vue({
+          el:'#app',
+          data(){
+              return{
+                  msg:'<a href="#">我是a标签</a>'
+              }
+          }
+      })
+  </script>
+  ```
+
+  ​	Vue 中的  `v-html` 和 React 中的 `dangerouslySetInnerHTML` 都是将 字符串 html 解析成 真正的 html标签。
+
+
+
+- **v-text**
+
+  ​	`v-text` 用于更新元素的 contentText，一般使用插值符号 `{{}}` 来更新元素内容
+
+  ```html
+  <p v-text='msg'></p>
+  ```
+
+  
+
+- **自定义指令**
+
+  ​	在 Vue 中，除了系统内置的一些指令外，还可以允许用户注册自定义指令，而自定义指令又可以分为 `全局自定义指令` 和 `局部自定义指令`。
+
+  ```html
+  <div id='app'>
+      <p v-color='color'>自定义指令</p>
+      <input v-focus type='text'>
+  </div>
+  <script>
+      // 注册全局自定义指令
+      Vue.directive('focus',{
+          bind(el,binding){
+              // 聚焦元素
+              el.focus()
+          }
+      })
+      
+  	let vm = new Vue({
+          el:'#app',
+          data(){
+              return{
+                  color:'hotpink'
+              }
+          },
+          // 注册局部自定义指令
+          directives:{
+              color:{
+                  bind(el,binding){
+                      el.style.color = binding.value
+                  }
+              }
+          }
+      })
+  </script>
+  ```
+
+  
+
+- **监听器**
+
+  ​	Vue通过 `watch` 选项来响应数据的变化，即监听数据变化。当需要在数据变化时执行异步或开销较大的操作时，使用该方式。
+
+  ```html
+  <div id='app'>
+      <p>{{number}}</p>
+      <button @click='handleClick'>点击更新数据</button>
+  </div>
+  <script>
+  	let vm = new Vue({
+          el:'#app',
+          data(){
+              return {
+                  number:5,
+                  arr:[1,2,3],
+                      person:{
+                          name:'zhangsan',
+                          age:10
+                      },
+                      objctArr:[
+                          {
+                              name:'小明',
+                              age:20
+                          },
+                          {
+                              name:'小亮',
+                              age:25
+                          }
+                      ]
+              }
+          },
+          methods:{
+              handleClick(){
+                  // this.number++
+                  
+                  // this.arr[0]='张三'
+                  // this.arr.push(9)
+  
+                   // this.person.name='张三'
+                   // this.person.age=20
+  
+                   this.objctArr[1].name='小菲'
+              }
+          },
+          watch:{		// 放置监听器
+              number:{	// 配置number的监听器
+                  handler(){	// number数据变化时触发
+                      console.log('number数据变化了，已监听到')
+                  }
+              },
+              arr:{    // 配置arr的侦听器
+                      handler(){      // 当arr改变时触发
+                          console.log('arr数据更新了，已监听到')
+                      }
+                  },
+                  person:{    // 配置person的侦听器  会监听 person 中所有数据
+                      handler(){      // 当person中任何一个数据改变时触发
+                          console.log('person数据更新了，已监听到')
+                      },
+                      deep:true       // 监听对象属性的改变
+                  },
+                  'person.age':{    // 配置person的侦听器  会监听 person 中指定属性的变化
+                      handler(){      // 当person中指定数据改变时触发
+                          console.log('person数据更新了，已监听到')
+                      },
+                      deep:true
+                  },
+                  objctArr:{    // 配置objectArr的侦听器  
+                      handler(){      // 当objectArr中数据改变时触发
+                          console.log('objectArr数据更新了，已监听到')
+                      },
+                      deep:true
+                  }
+          }
+      })
+  </script>
+  ```
+
+  
+
+- **计算属性（computed）和监听器（watch）**
+
+  ​	在Vue中，可以通过一个计算属性和watch函数来监听某个数据属性的变化，但二者存在一定的差别。前面提到的，可以用计算属性实现的，就可以用方法（methods）实现。同样，可以用计算计算属性实现的，也可以用监听器（watch）实现，只要所依赖的相应数据不是频繁变化，开销不大的时候，就用计算属性，反之就用监听器。而且，计算属性不需要在 data 中进行定义变量，而监听器监听的变量需要在 data 中进行定义。
+
+
+
+## Day05-过滤器&生命周期
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
