@@ -261,17 +261,130 @@ var val = obj.name;//在得到obj的name属性，会触发get方法
 
   `v-else-if` 为 `v-if` 的 "else-if" 块
 
-  注：v-else-if 
+  <font color='blue'>注：v-else-if  必须紧跟在 v-if 或者 v-else-if 后面，否则不会被识别</font>
+
+```html
+<template v-if='loginType==="username"' >
+   <label>用户名</label>
+   <input placeholder='请输入用户名' key='1'>
+</template>
+<template v-else>
+  	<label>密码</label>
+    <input placeholder='请输入密码' key='2'>
+</template>
+<button @click='handleClick'>点击切换</button>
+```
+
+​		上述例子中 通过 v-if 和 v-else 指令来切换用户名输入框或密码输入框，Vue也尽可能高效的渲染元素，即会重复渲染 input 已有元素而非重新渲染，这样的话在用户名的input中输入的值切换时依然会存在于密码的input输入框内，而 Vue 使用 **key** 值来解决了这个问题，每个input具有单独的 key 值，从而在切换时区分二者。
 
 
 
+- **v-show**
+
+  ​	`v-show` 根据 css 的display 来控制dom元素是否渲染在页面中，true表示渲染，false表示不渲染。根据表达式值的真假来切换 dom 元素的 **display** 值（block/none）。
+
+  ​	<font color='blue'>注：v-show 不支持 template 元素，也不支持 v-else。</font>
+
+```html
+ <h3 v-show='isShow'>我是三级标题</h3>
+```
 
 
 
+- **v-if  与 v-show 对比**
+
+  ​	`v-if` 是”真正“的条件渲染，因为它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建。`v-if` 也是惰性的，如果在初始渲染时条件为假，则什么也不做，直到条件第一次变为真时，才会开始渲染条件块。
+
+  ​	相比之下，`v-show` 就简单得多，不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS进行切换。
+
+  ​	一般来说，`v-if` 有更高的切换开销，而 `v-show` 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 `v-show` 较好，如果在运行时条件很少改变，则使用 `v-if` 较好。
+
+  
+
+- **v-if 和 v-for**
+
+  当 `v-if` 和 `v-for` 一起使用时，v-for 的**优先级**会比 v-if 高，<font color='red'>**故不推荐同时使用 v-if 和 v-for**</font>
+
+  下面看一个例子：
+
+```html
+<div id="app">
+    <ul>
+        <li v-for="(todo,index) in todos" v-if="todo.isComplate">
+        	{{index}}
+        </li>
+    </ul>
+    <ul>
+        <li v-for="(todo,index) filterTodos">
+        	{{index}}
+        </li>
+    </ul>
+</div>
+
+<script>
+	let vm = new Vue({
+        el:"#app",
+        data(){
+            return{
+                todos:[
+                    {isComplete:true}
+                    {isComplete:false}
+                    {isComplete:true}
+                ]
+            }
+        },
+        computed:{
+            filterTodos(){	// 把todos中isComplete值为false 过滤掉，从而减少不必要的循环
+        		return this.todos.filter(item=>item.isComplete)
+    		}        
+        }
+    })
+</script>
+```
+
+![v-if和v-for](F:\Web前端\js第九期-系统班\框架班(react+node+vue)-海文\个人学习总结\vue\day03-基本指令&计算属性\v-if和v-for.png)
+
+​	上面例子中 循环 todos 列表，并且带有 v-if 条件语句时，因为 v-for 的优先级会比 v-if 高，所有通过渲染的 index 索引值可知 循环了三次，只是后面的 v-if 语句让一种一个未渲染，而使用 conputed 计算属性将 v-if 条件为假的条件块过滤掉，这样就减少了不必要的循环。解决了 v-if 和 v-for 同时使用带来的问题。
 
 
 
+- **计算属性**
 
+  ​	我们在处理逻辑时，一些简单的逻辑可以放在模板中，但是对于一些较为复杂的逻辑如果放在模板中，这样就会造成代码过于冗余，逻辑与视图高度耦合了。因此 Vue 提供了计算属性（**computed**）来专门处理一些逻辑。
+
+```html
+<div id='app'>
+    {{number3}}
+</div>
+<script>
+	let vm = new Vue({
+        el:'#app',
+        data(){
+            return{
+                number1:10,
+                number2:30
+            }
+        },
+        computed:{
+            number3(){
+                return this.number1 + this.number2
+            }
+        }
+    })
+</script>
+```
+
+​		
+
+- **计算属性（computed） 与 方法（methods）**
+
+  ​	通过上述例子，我们可以看到，使用 `methods` 同样可也以实现。但二者是存在一定区别的。<font color='blue'>计算属性是基于它们的响应式依赖进行**缓存**的</font>。只在相关响应式依赖发生改变时它们才会重新求值。意味着只要 data 中的数据没有改变，多次访问时计算属性会立即返回之前的结果，不必要再次执行函数。相比之下，每当触发重新渲染时，调用方法（methods）将**总会**再次执行函数。
+
+  ​	计算属性和方法的使用场景：需要做缓存时就使用 `computed` 计算属性，比如我们有一个性能开销比较大的计算属性A，他需要遍历一个巨大的数组并做大量的计算。然后我们可能有其他的计算属性依赖于A，如果没有缓存，将不可避免的多次执行 A 的 getter。当然，如果不希望有缓存，就可以使用 `methods` 方法来代替。
+
+
+
+## Day04-基本指令&监听器
 
 
 
