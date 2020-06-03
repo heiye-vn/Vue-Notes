@@ -552,6 +552,10 @@ var val = obj.name;//在得到obj的name属性，会触发get方法
 
 
 
+## Day06-组件&父组件向子组件传值
+
+233
+
 
 
 
