@@ -1299,6 +1299,8 @@ export default new Vuex.Store({
 
 ​		**注：**在使用 Bootstrap框架时很多时候由于存在交互效果，需要依赖于 jQuery 库，故还需要引入 jQuery 插件库（js标签顺序是 jq 在 bs 前，不能反 ）
 
+
+
 - ### Action（异步操作）
 
   ​		类似 mutation ，且 action 是直接提交的 mutation ，而不是直接变更状态
@@ -1315,3 +1317,11 @@ export default new Vuex.Store({
   ```
 
   
+  
+- #### 辅助函数的定义
+
+  - mapState：为组件创建 **计算属性**（<font color='red'>computed</font>） 以返回 Vuex store 中的状态（state）
+  - mapGetters：为组件创建 **计算属性**（<font color='red'>computed</font>） 以返回 getter 的返回值
+  - mapMutations：为组件创建 **方法**（<font color='blue'>method</font>） 以提交mutation
+  - mapActions：为组件创建 **方法**（<font color='blue'>method</font>） 以分发 action
+
